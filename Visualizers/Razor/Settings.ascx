@@ -1,0 +1,1 @@
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Settings.ascx.cs" Inherits="DotNetNuke.Modules.DTSReports.Visualizers.Razor.Settings" %>
