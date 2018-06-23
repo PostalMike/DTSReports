@@ -584,9 +584,12 @@ namespace DotNetNuke.Modules.DTSReports
                     view.ID = this.GetExtensionViewName(ext, extensionType);
                     view.Controls.Add(ctrl);
 
-                    // Add the view to the multi view
-                    multiView.Views.Add(view);
-                }
+					// Add the view to the multi view
+					if (multiView.FindControl(view.ID) == null)
+					{
+						multiView.Views.Add(view);
+					}
+				}
 
                 // Get the full text for the drop down list item
                 var itemText = string.Format(Localization.GetString(typeResourceKey, this.LocalResourceFile), extName);

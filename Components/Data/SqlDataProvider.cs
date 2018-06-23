@@ -25,28 +25,29 @@
 
 namespace DotNetNuke.Modules.DTSReports.Data
 {
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Data.Common;
-    using System.Data.SqlClient;
-    using System.Transactions;
-    using Components;
-    using DotNetNuke.Common.Utilities;
-    using DotNetNuke.Framework.Providers;
-    using DotNetNuke.Modules.DTSReports.Visualizers.Xslt;
-    using Microsoft.ApplicationBlocks.Data;
+	using System.Collections.Generic;
+	using System.Data;
+	using System.Data.Common;
+	using System.Data.SqlClient;
+	using System.Transactions;
+	using Components;
+	using Microsoft.ApplicationBlocks.Data;
+	using DotNetNuke.Common.Utilities;
+	using DotNetNuke.Framework.Providers;
+	using DotNetNuke.Modules.DTSReports.Visualizers.Xslt;
+	using Entities.Modules;
 
-    /// -----------------------------------------------------------------------------
-    /// <summary>
-    ///     Implements the Reports Data Provider on Microsoft SQL Server
-    /// </summary>
-    /// <remarks>
-    /// </remarks>
-    /// <history>
-    ///     [anurse]	08/29/2006	Created
-    /// </history>
-    /// -----------------------------------------------------------------------------
-    public class SqlDataProvider : DataProvider
+	/// -----------------------------------------------------------------------------
+	/// <summary>
+	///     Implements the Reports Data Provider on Microsoft SQL Server
+	/// </summary>
+	/// <remarks>
+	/// </remarks>
+	/// <history>
+	///     [anurse]	08/29/2006	Created
+	/// </history>
+	/// -----------------------------------------------------------------------------
+	public class SqlDataProvider : DataProvider
     {
         #region Constructors
 
@@ -94,10 +95,10 @@ namespace DotNetNuke.Modules.DTSReports.Data
 
         public override IDataReader ExecuteSQL(string strScript, params DbParameter[] parameters)
         {
-            // HACK: Copy-pasted from Core SqlDataProvider - core doesn't provide a system for parameterized dynamic sql
+			// HACK: Copy-pasted from Core SqlDataProvider - core doesn't provide a system for parameterized dynamic sql
 
-            // TODO: Switch to Regex and use IgnoreCase (punting this fix in 5.1 due to testing burden)
-            strScript = strScript.Replace("{databaseOwner}", this._databaseOwner);
+			// TODO: Switch to Regex and use IgnoreCase (punting this fix in 5.1 due to testing burden)
+			strScript = strScript.Replace("{databaseOwner}", this._databaseOwner);
             strScript = strScript.Replace("{dO}", this._databaseOwner);
             strScript = strScript.Replace("{do}", this._databaseOwner);
             strScript = strScript.Replace("{Do}", this._databaseOwner);
@@ -112,11 +113,13 @@ namespace DotNetNuke.Modules.DTSReports.Data
             {
                 sqlParams[i] = (SqlParameter) parameters[i];
             }
+			//Durthaler Hack --
+			//call the actual sproc that will run the query pulling the params from settings.
+			return SqlHelper.ExecuteReader(this._connectionString, CommandType.StoredProcedure, "ISSI_REPORTS_SEARCH_RESULTS_BY_USER_AND_DATES");
+			// return SqlHelper.ExecuteReader(this._connectionString, CommandType.Text, strScript, sqlParams);
+		}
 
-            return SqlHelper.ExecuteReader(this._connectionString, CommandType.Text, strScript, sqlParams);
-        }
-
-        public override IDataReader GetXsltExtensionObjects(int tabModuleId)
+		public override IDataReader GetXsltExtensionObjects(int tabModuleId)
         {
             return DotNetNuke.Data.DataProvider.Instance()
                              .ExecuteReader("reports_GetXsltExtensionObjects", tabModuleId);

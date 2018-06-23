@@ -113,10 +113,10 @@ namespace DotNetNuke.Modules.DTSReports.Visualizers.Grid
         /// -----------------------------------------------------------------------------
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (this.IsFirstRun)
-            {
+            //if (this.IsFirstRun)
+            //{
                 this.DataBind();
-            }
+            //}
         }
 
         protected void grdResults_PageIndexChanging(object sender, GridViewPageEventArgs e)
